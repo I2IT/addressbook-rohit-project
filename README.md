@@ -29,6 +29,9 @@ export PATH="${M2_HOME}/bin:${PATH}"
 
 source .bashrc
 
+git clone  https://github.com/RohitRawat891997/first-project.git
+cd  first-project
+
 mvn clean package
 ```
 ```
