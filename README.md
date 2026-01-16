@@ -11,6 +11,26 @@ designed. Please note this example uses and requires Java 8 to work.
 Running the example from the command line
 -------------------
 ```
+apt  install  openjdk-21-jdk    -y
+wget https://dlcdn.apache.org/maven/maven-3/3.9.12/binaries/apache-maven-3.9.12-bin.tar.gz
+tar  -xzvf  apache-maven-3.9.12-bin.tar.gz
+mv   apache-maven-3.9.12  maven
+mv    maven  /opt
+
+vim  .bashrc
+
+export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
+export PATH=$PATH:$JAVA_HOME/bin
+export M2_HOME=/opt/maven
+export PATH="${M2_HOME}/bin:${PATH}"
+
+:wq!
+
+source .bashrc
+
+mvn clean package
+```
+```
 $ mvn jetty:run
 ```
 
