@@ -44,7 +44,8 @@ pipeline {
             // Removes existing container if it exists
             sh "docker rm -f addressbook-container || true"
             
-            // Map host port 8081 to container port 8080
+            // Map host port 8081 to container port 8080 //the command to -p 8081:8080, you are telling the server: "Listen for web traffic on 8081, and send it to the application inside the container on 8080."
+            // 8080 port is used for jenkins server
             sh "docker run -d --name addressbook-container -p 8081:8080 ${DOCKER_IMAGE}"
         }
     }
