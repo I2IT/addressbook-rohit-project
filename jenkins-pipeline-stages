@@ -1,0 +1,59 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_IMAGE = "priyanka1802/addressbook:latest"
+        DOCKER_HUB_ID = 'docker-hub-creds'
+    }
+
+    stages {
+        stage('Step 1: Clone Repository') {
+            steps {
+                git branch: 'main', url: 'https://github.com/I2IT/addressbook-rohit-project.git'
+            }
+        }
+
+        stage('Step 2: Build Docker Image') {
+            steps {
+                script {
+                    echo "Building image: ${DOCKER_IMAGE}"
+                    sh "docker build -t ${DOCKER_IMAGE} ."
+                }
+            }
+        }
+
+        stage('Step 3: Push to Docker Hub') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: "${DOCKER_HUB_ID}", 
+                                 passwordVariable: 'HUB_PASS', 
+                                 usernameVariable: 'HUB_USER')]) {
+                    script {
+                        // Added quotes around variables for shell safety
+                        sh "echo '${HUB_PASS}' | docker login -u '${HUB_USER}' --password-stdin"
+                        sh "docker push ${DOCKER_IMAGE}"
+                    }
+                }
+            }
+        }
+
+        // FIXED: Moved outside of Step 3 steps
+       stage('Step 4: Create Container') {
+    steps {
+        script {
+            echo "Deploying container..."
+            // Removes existing container if it exists
+            sh "docker rm -f addressbook-container || true"
+            
+            // Map host port 8081 to container port 8080
+            sh "docker run -d --name addressbook-container -p 8081:8080 ${DOCKER_IMAGE}"
+        }
+    }
+}
+    }
+    
+    post {
+        always {
+            sh "docker logout"
+        }
+    }
+}
